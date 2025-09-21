@@ -1,0 +1,8 @@
+{
+    "mensagem": "Pokémon cadastrado com sucesso.",
+    "pokemon": {
+        "name": "Pikachu",
+        "type": "Elétrico",
+        "number": 25
+    }
+}

@@ -1,0 +1,28 @@
+[
+    {
+        "nomeTeste": "que o Pokémon não foi encontrado",
+        "update": {
+            "query": "mutation UpdatePokemon($name: String, $type: String, $number: Int, $uuid: ID!) { updatePokemon(name: $name, type: $type, number: $number, uuid: $uuid) { name number type }}",
+            "variables": {
+                "name": "Bulbasaur",
+                "type": "Grama",
+                "number": 1,
+                "uuid": "a7cd70cb-9dc8-46c0-9f2e-60d325627877"
+            }
+        },
+        "mensagemEsperada": "Pokémon não encontrado."
+    },
+    {
+        "nomeTeste": "que o nome do Pokémon já foi cadastrado",
+        "update": {
+            "query": "mutation UpdatePokemon($name: String, $type: String, $number: Int, $uuid: ID!) { updatePokemon(name: $name, type: $type, number: $number, uuid: $uuid) { name number type }}",
+            "variables": {
+                "name": "Charmander",
+                "type": "Grama",
+                "number": 1,
+                "uuid": "a7cd70cb-9dc8-46c0-9f2e-60d32562799f"
+            }
+        },
+        "mensagemEsperada": "Nome do Pokémon já cadastrado."
+    }
+]

@@ -1,0 +1,9 @@
+{
+    "mensagem": "Pokémon atualizado com sucesso.",
+    "pokemon": {
+        "name": "Ximira",
+        "type": "Grama",
+        "number": 1,
+        "owner": "31081482-53b7-4fe6-bea3-7409cec27249"
+    }
+}

@@ -1,0 +1,46 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Instalar dependências
+      run: npm install
+
+    - name: Executar testes do controller de API Rest via HTTP
+      run: npm run test-rest-controller
+
+    - name: Subir a API Rest
+      run: npm run start:rest &
+
+    - name: Subir a API GraphQL
+      run: npm run start:graphql &
+
+    - name: Esperar as APIs funcionarem
+      run: sleep 8
+
+    - name: Criar o arquivo .env
+      run:  |
+        echo "BASE_URL_REST=${{ secrets.BASE_URL_REST }}" >> .env
+        echo "BASE_URL_GRAPHQL=${{ secrets.BASE_URL_GRAPHQL }}" >> .env
+
+    - name: Executar testes external de API Rest via HTTP
+      run: npm run test-rest-external
+
+    - name: Executar testes external de API GraphQL via HTTP
+      run: npm run test-graphql-external

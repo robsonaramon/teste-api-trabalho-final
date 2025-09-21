@@ -1,0 +1,18 @@
+[
+    {
+        "nomeTeste": "o e-mail está incorreto",
+        "loginInput": {
+        "email": "incorreto@admin.com",
+        "password": "123456"
+        },
+        "mensagemEsperada": "Usuário ou senha inválidos."
+    },
+    {
+        "nomeTeste": "a senha está incorreta",
+        "loginInput": {
+        "email": "admin@admin.com",
+        "password": "123"
+        },
+        "mensagemEsperada": "Usuário ou senha inválidos."
+    }
+]

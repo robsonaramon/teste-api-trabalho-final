@@ -1,0 +1,337 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Pokédex API",
+    "version": "1.0.0",
+    "description": "API REST para gerenciamento de usuários e Pokémon."
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Registrar novo usuário",
+        "description": "Cria um novo usuário com e-mail único.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["username", "email", "password"]
+              },
+              "example": {
+                "username": "ash",
+                "email": "ash@email.com",
+                "password": "pikachu123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário registrado com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "mensagem": "Usuário registrado com sucesso.",
+                  "user": {
+                    "uuid": "...",
+                    "username": "ash",
+                    "email": "ash@email.com"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou e-mail já cadastrado.",
+            "content": {
+              "application/json": {
+                "example": { "erro": "E-mail já cadastrado." }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Login de usuário",
+        "description": "Realiza login e retorna JWT.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              },
+              "example": {
+                "email": "admin@admin.com",
+                "password": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "mensagem": "Login realizado com sucesso.",
+                  "token": "...",
+                  "user": {
+                    "uuid": "...",
+                    "username": "admin",
+                    "email": "admin@admin.com"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário ou senha inválidos.",
+            "content": {
+              "application/json": {
+                "example": { "erro": "Usuário ou senha inválidos." }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": ["Usuários"],
+        "summary": "Listar usuários",
+        "description": "Retorna lista de usuários cadastrados. Requer autenticação JWT.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de usuários.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "usuarios": [
+                    { "uuid": "...", "username": "admin", "email": "admin@admin.com", "isAdmin": true }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token não fornecido ou inválido.",
+            "content": { "application/json": { "example": { "erro": "Token não fornecido." } } }
+          }
+        }
+      }
+    },
+    "/api/users/{uuid}": {
+      "delete": {
+        "tags": ["Usuários"],
+        "summary": "Excluir usuário",
+        "description": "Exclui usuário pelo UUID. Apenas admin pode excluir. Requer autenticação JWT.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário excluído com sucesso.",
+            "content": { "application/json": { "example": { "mensagem": "Usuário excluído com sucesso." } } }
+          },
+          "403": {
+            "description": "Apenas administradores podem excluir usuários.",
+            "content": { "application/json": { "example": { "erro": "Apenas administradores podem excluir usuários." } } }
+          }
+        }
+      }
+    },
+    "/api/pokemon": {
+      "get": {
+        "tags": ["Pokémon"],
+        "summary": "Listar Pokémon",
+        "description": "Lista Pokémon cadastrados. Permite busca por nome, tipo ou número. Requer autenticação JWT.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "name", "in": "query", "schema": { "type": "string" } },
+          { "name": "type", "in": "query", "schema": { "type": "string" } },
+          { "name": "number", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de Pokémon.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "pokemons": [
+                    { "uuid": "...", "name": "Bulbasaur", "type": "Grama", "number": 1, "owner": "..." }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token não fornecido ou inválido.",
+            "content": { "application/json": { "example": { "erro": "Token não fornecido." } } }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Pokémon"],
+        "summary": "Cadastrar Pokémon",
+        "description": "Cadastra novo Pokémon. Nome deve ser único. Requer autenticação JWT.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "type": { "type": "string" },
+                  "number": { "type": "integer" }
+                },
+                "required": ["name", "type", "number"]
+              },
+              "example": {
+                "name": "Bulbasaur",
+                "type": "Grama",
+                "number": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pokémon cadastrado com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "mensagem": "Pokémon cadastrado com sucesso.",
+                  "pokemon": { "uuid": "...", "name": "Bulbasaur", "type": "Grama", "number": 1, "owner": "..." }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Nome do Pokémon já cadastrado ou erro de validação.",
+            "content": { "application/json": { "example": { "erro": "Nome do Pokémon já cadastrado." } } }
+          }
+        }
+      }
+    },
+    "/api/pokemon/{uuid}": {
+      "put": {
+        "tags": ["Pokémon"],
+        "summary": "Atualizar Pokémon",
+        "description": "Atualiza dados do Pokémon pelo UUID. Apenas o dono pode atualizar. Requer autenticação JWT.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "uuid", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "type": { "type": "string" },
+                  "number": { "type": "integer" }
+                }
+              },
+              "example": {
+                "name": "Ivysaur",
+                "type": "Grama",
+                "number": 2
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pokémon atualizado com sucesso.",
+            "content": { "application/json": { "example": { "mensagem": "Pokémon atualizado com sucesso.", "pokemon": { "uuid": "...", "name": "Ivysaur", "type": "Grama", "number": 2, "owner": "..." } } } }
+          },
+          "400": {
+            "description": "Erro de validação ou permissão.",
+            "content": { "application/json": { "example": { "erro": "Apenas o dono pode atualizar este Pokémon." } } }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Pokémon"],
+        "summary": "Excluir Pokémon",
+        "description": "Exclui Pokémon pelo UUID. Apenas o dono pode excluir. Requer autenticação JWT.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "uuid", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pokémon excluído com sucesso.",
+            "content": { "application/json": { "example": { "mensagem": "Pokémon excluído com sucesso." } } }
+          },
+          "400": {
+            "description": "Erro de permissão ou não encontrado.",
+            "content": { "application/json": { "example": { "erro": "Apenas o dono pode excluir este Pokémon." } } }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check",
+        "description": "Verifica se o servidor está online.",
+        "responses": {
+          "200": {
+            "description": "Servidor online.",
+            "content": { "application/json": { "example": { "status": "ok" } } }
+          }
+        }
+      }
+    },
+    "/api/docs/swagger": {
+      "get": {
+        "tags": ["Documentação"],
+        "summary": "Swagger JSON",
+        "description": "Exibe documentação Swagger da API.",
+        "responses": {
+          "200": {
+            "description": "Documentação Swagger exibida.",
+            "content": { "text/html": {} }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
