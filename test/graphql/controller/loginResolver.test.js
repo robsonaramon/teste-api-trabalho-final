@@ -16,7 +16,7 @@ describe('Testes exceção no login', () => {
     const testesErroLogin = require('../fixture/request/login/loginWithError.json');
 
     testesErroLogin.forEach(teste => {
-        it(`Apresentar mensagem de erro quando ${teste.nomeTeste}`, () => {
+        it(`Apresentar a mensagem de erro quando ${teste.nomeTeste}`, () => {
             findByEmailMock.returns(teste.usuario);
             comparePasswordMock.returns(teste.senhaCorreta);
 

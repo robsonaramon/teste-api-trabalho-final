@@ -4,25 +4,14 @@ const { expect } = require('chai');
 const app = require('../../../app')
 require('dotenv').config();
 
-describe('Testes de atualização do nome do Pokémon', ()=> {
-    before(async()=> {
-        const login = require('../fixture/request/login/login.json')
-        const resposta = await request(app)
-            .post('/api/auth/login')
-            .send(login);
-        
-        token = resposta.body.token;
-    });
-    
-    it('Atualizar com sucesso o nome do Pokémon', async()=> {
-        const atualizacao = require('../fixture/request/pokemon/updateLoggedIn.json');
+describe('Testes exceção no cadastro de Pokémon', ()=> {
+    const cadastro = require ('../fixture/request/pokemon/insertPokemonWhitErrors.json');
+    it('Apresentar a mensagem ao não informar o token', async()=> {
         const resposta = await request(process.env.BASE_URL_REST)
-            .put(`/api/pokemon/${uuid}`)
-            .set('Authorization', `Bearer ${token}`)
-            .send(atualizacao)
+            .post('/api/pokemon')
+            .send(cadastro);
 
-            expect(resposta.status).to.equal(200);
-            respostaEsperada = (require('../fixture/response/pokemon/responseUpdateLoggedIn.json'));
-            expect(resposta.body).excluding('uuid').to.deep.equal(respostaEsperada);
-    })
+            expect(resposta.status).to.equal(401);
+            expect(resposta.body).to.have.property('erro').that.equals('Token não fornecido.'); 
+    });
 });
