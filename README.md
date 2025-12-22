@@ -290,38 +290,25 @@ stages: [
 ```
 
 #### 8. Reaproveitamento de Resposta
-Utilizado para executar os testes a partir de um conjunto de dados externos, permitindo a reutilização do mesmo fluxo de teste com diferentes entradas.
+Utilizado para capturar dados retornados por uma requisição e reutilizá-los em etapas posteriores do teste.
 
 **Localização:**
-- [registerPokemon.js](test/k6/registerPokemon.js)
-- [pokemon.test.data.json](test/k6/data/pokemon.test.data.json)
+[registerPokemon.js](test/k6/registerPokemon.js)
 
 **Utilização:**
-Declaração da variavel:
+Coleta do token após login:
 ```js
-const pokemons = new SharedArray('pokemons', function (){
-    return JSON.parse(open('./data/pokemon.test.data.json'));
-})
+token = res.json('token');
 ```
-Declaração da variavel:
+
+Utilização do token nas requisições autenticadas:
 ```js
-const pokemon = pokemons[ exec.scenario.iterationInTest % pokemons.length ];
-```
-Utilizando na requisicao:
-```js
-let res = http.post(`${BASE_URL}/api/pokemon`,
-            JSON.stringify({
-                name: pokemon.name,
-                type: pokemon.type,
-                number: pokemon.number
-            }),
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            }
-);
+{
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    }
+}
 ```
 
 #### 9. Uso de Token de Autenticação
