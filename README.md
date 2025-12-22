@@ -348,6 +348,7 @@ import { SharedArray } from 'k6/data';
 ```
 
 **Utilização:**
+
 Declaração da variável utilizando `SharedArray`:
 ```js
 const pokemons = new SharedArray('pokemons', function (){
