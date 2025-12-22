@@ -296,6 +296,7 @@ Utilizado para capturar dados retornados por uma requisição e reutilizá-los e
 [registerPokemon.js](test/k6/registerPokemon.js)
 
 **Utilização:**
+
 Coleta do token após login:
 ```js
 token = res.json('token');
@@ -318,6 +319,7 @@ Utilizado para autenticar o usuário e permitir o acesso a endpoints protegidos 
 [registerPokemon.js](test/k6/registerPokemon.js)
 
 **Utilização:**
+
 Coleta do token após login:
 ```js
 token = res.json('token');
